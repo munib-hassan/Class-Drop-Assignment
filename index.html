@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClassDrop — BSE Spring 2026</title>
+<style>
+*{box-sizing:border-box}
+:root{--bg:#0b0f19;--card:#1a2130;--field:#0d111b;--border:#303a53;--text:#f5f2f7;--muted:#9aa4ba;--purple:#8b5cf6;--purple2:#a78bfa}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,"Times New Roman",serif;font-weight:600}
+.app{max-width:760px;margin:auto;padding:34px 24px}
+.header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:46px}
+.logo{font-size:43px;font-style:italic;font-weight:700}.sub{margin-top:14px;color:var(--muted);font-size:21px;font-style:italic}
+.cr{margin-top:8px;background:none;border:0;color:var(--purple2);font:inherit;font-size:21px;font-style:italic;text-decoration:underline;cursor:pointer}
+.card{background:var(--card);border:1px solid #2c354b;border-radius:24px;padding:54px 48px 42px}
+h1{font-size:38px;margin:0 0 14px;font-style:italic}.hint{color:var(--muted);font-size:23px;font-style:italic;margin:0 0 42px}
+.field{margin-bottom:30px}label{display:block;margin-bottom:13px;font-size:22px;font-style:italic}
+input[type=text],input[type=password]{width:100%;height:76px;padding:0 30px;border-radius:23px;border:2px solid #29334a;background:var(--field);color:#fff;font:600 italic 21px Georgia;outline:0}
+input::placeholder{color:#727b8d}
+.upload{min-height:285px;border:3px dashed #38435f;border-radius:26px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;user-select:none}
+.upload:hover,.upload.drag{border-color:var(--purple);background:#8b5cf60b}.icon{font:55px Arial;margin-bottom:18px}
+.ut{font-size:25px;font-style:italic}.ui{color:var(--muted);font-size:19px;font-style:italic}.fn{color:var(--purple2);margin-top:10px;font-size:17px;word-break:break-word}
+input[type=file]{display:none}
+.submit{width:100%;height:62px;margin-top:27px;border:0;border-radius:16px;background:var(--purple);color:#fff;font:700 italic 22px Georgia;cursor:pointer}.submit:disabled{opacity:.6}
+.msg{display:none;margin-top:17px;padding:12px;border-radius:12px;font-size:17px}.show{display:block}.ok{color:#8ee8af;background:#55d1871a}.err{color:#ffadb8;background:#ef6b7a1a}
+footer{text-align:center;color:#59647a;margin-top:22px}
+.ov{position:fixed;inset:0;background:#000b;backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.ov.open{display:flex}
+.modal{width:min(100%,1100px);max-height:90vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:22px;padding:30px}.loginbox{max-width:480px}
+.mh{display:flex;justify-content:space-between;align-items:center}.mh h2{font-size:30px;font-style:italic}
+.x{width:42px;height:42px;background:#101621;border:1px solid var(--border);color:#fff;border-radius:10px;font-size:25px;cursor:pointer}
+.actions{display:flex;gap:10px}.actions button{flex:1;height:48px;border-radius:12px;font:700 18px Georgia;cursor:pointer}.cancel{background:none;color:#fff;border:1px solid var(--border)}.login{background:var(--purple);color:#fff;border:0}
+.bar{display:flex;justify-content:space-between;margin:18px 0;color:var(--muted)}.table{overflow:auto;border:1px solid var(--border);border-radius:13px}
+table{width:100%;min-width:950px;border-collapse:collapse}th,td{padding:13px 14px;border-bottom:1px solid var(--border);text-align:left}th{background:#101621}
+a.btn{display:inline-block;padding:7px 11px;border-radius:9px;background:#8b5cf61c;border:1px solid #8b5cf65c;color:#c4b5fd;text-decoration:none;margin-right:5px}.empty{text-align:center;color:var(--muted);padding:35px}
+@media(max-width:600px){.app{padding:29px 31px}.logo{font-size:35px}.sub,.cr{font-size:18px}.card{padding:52px 47px 34px}h1{font-size:30px}.hint{font-size:19px}label{font-size:19px}input[type=text],input[type=password]{height:74px;font-size:18px}.upload{min-height:278px}.ut{font-size:22px}.ui{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="header">
+<div><div class="logo">ClassDrop</div><div class="sub">BSE Class, Spring 2026</div></div>
+<button class="cr" id="cr" type="button">CR login</button>
+</header>
+
+<main class="card">
+<h1>Submit your assignment</h1>
+<p class="hint">Fill in your details and attach your PDF.</p>
+<form id="form">
+<div class="field"><label for="name">Full name</label><input id="name" type="text" placeholder="e. g. Munib Hassan" required></div>
+<div class="field"><label for="roll">Roll number</label><input id="roll" type="text" placeholder="e. g. SP26-BSE-069" required></div>
+<div class="field"><label for="subject">Subject / assignment</label><input id="subject" type="text" placeholder="e. g. Pre Calculus 2 – Assignment 1" required></div>
+<div class="field">
+<label>Assignment PDF</label>
+<div class="upload" id="up" role="button" tabindex="0">
+<div><div class="icon">↑</div><div class="ut">Choose PDF file</div><div class="ui">PDF only · Maximum 20 MB</div><div class="fn" id="fn"></div></div>
+<input id="file" type="file" accept="application/pdf,.pdf">
+</div>
+</div>
+<button class="submit" id="send" type="submit">Submit Assignment</button>
+<div class="msg" id="msg"></div>
+</form>
+</main>
+<footer>ClassDrop · BSE Class, Spring 2026</footer>
+</div>
+
+<div class="ov" id="loginOv">
+<div class="modal loginbox">
+<div class="mh"><h2>CR Login</h2><button class="x" type="button" data-close="loginOv">×</button></div>
+<p style="color:var(--muted);font-size:18px;font-style:italic">Enter the CR password.</p>
+<form id="loginForm">
+<div class="field"><label for="pass">Password</label><input id="pass" type="password" placeholder="Enter password" required></div>
+<div class="msg" id="loginMsg"></div>
+<div class="actions"><button type="button" class="cancel" data-close="loginOv">Cancel</button><button type="submit" class="login">Login</button></div>
+</form>
+</div>
+</div>
+
+<div class="ov" id="dashOv">
+<div class="modal">
+<div class="mh"><h2>CR Dashboard</h2><button class="x" type="button" data-close="dashOv">×</button></div>
+<div class="bar"><span id="count">Loading...</span></div><div id="dash"></div>
+</div>
+</div>
+
+<script>
+/* ClassDrop — Supabase is loaded lazily so the buttons still work if a CDN is slow/blocked. */
+const SUPABASE_URL="https://hltzvgyguapmefiicdme.supabase.co";
+const SUPABASE_KEY="sb_publishable_rNhp0UxKRVl_susC_UFK8g_k6lLcdBm";
+const CR_PASSWORD="munib123";
+const BUCKET="assignments";
+const MAX_SIZE=20*1024*1024;
+let sb=null, supabaseLoading=null;
+
+const $=id=>document.getElementById(id);
+function showMsg(el,text,type){el.textContent=text;el.className="msg show "+type}
+function hideMsg(el){el.textContent="";el.className="msg"}
+function closeModal(id){$(id).classList.remove("open")}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+function loadSupabase(){
+ if(sb) return Promise.resolve(sb);
+ if(supabaseLoading) return supabaseLoading;
+ supabaseLoading=new Promise((resolve,reject)=>{
+   if(window.supabase){sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);return resolve(sb)}
+   const s=document.createElement("script");
+   s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+   s.onload=()=>{
+     if(!window.supabase)return reject(new Error("Supabase library did not load."));
+     sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);resolve(sb)
+   };
+   s.onerror=()=>reject(new Error("Could not load the Supabase library. Check your internet connection."));
+   document.head.appendChild(s);
+ });
+ return supabaseLoading;
+}
+
+const up=$("up"),file=$("file"),fn=$("fn");
+
+function validFile(f){
+ return !!f && (f.type==="application/pdf" || f.name.toLowerCase().endsWith(".pdf")) && f.size<=MAX_SIZE;
+}
+function selectFile(f){
+ if(!f)return;
+ if(!validFile(f)){
+   fn.textContent=f.size>MAX_SIZE?"File is larger than 20 MB.":"Please choose a PDF file.";
+   file.value=""; return;
+ }
+ const dt=new DataTransfer();dt.items.add(f);file.files=dt.files;
+ fn.textContent="Selected: "+f.name;
+}
+up.addEventListener("click",()=>file.click());
+up.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")file.click()});
+file.addEventListener("change",()=>selectFile(file.files[0]));
+up.addEventListener("dragover",e=>{e.preventDefault();up.classList.add("drag")});
+up.addEventListener("dragleave",()=>up.classList.remove("drag"));
+up.addEventListener("drop",e=>{e.preventDefault();up.classList.remove("drag");selectFile(e.dataTransfer.files[0])});
+
+$("cr").addEventListener("click",()=>{
+ hideMsg($("loginMsg"));$("pass").value="";$("loginOv").classList.add("open");
+ setTimeout(()=>$("pass").focus(),100);
+});
+
+$("loginForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ if($("pass").value!==CR_PASSWORD){showMsg($("loginMsg"),"Incorrect password.","err");return}
+ closeModal("loginOv");$("dashOv").classList.add("open");$("dash").innerHTML='<div class="empty">Connecting to dashboard...</div>';
+ try{await loadSupabase();await loadDashboard()}
+ catch(err){$("count").textContent="";$("dash").innerHTML='<div class="empty">'+esc(err.message)+'</div>'}
+});
+
+async function loadDashboard(){
+ const r=await sb.from("assignments").select("*").order("submitted_at",{ascending:false});
+ if(r.error)throw r.error;
+ $("count").textContent=r.data.length+(r.data.length===1?" submission":" submissions");
+ if(!r.data.length){$("dash").innerHTML='<div class="empty">No assignments yet.</div>';return}
+ $("dash").innerHTML='<div class="table"><table><thead><tr><th>#</th><th>Student Name</th><th>Roll Number</th><th>Subject</th><th>Filename</th><th>Timestamp</th><th>PDF</th></tr></thead><tbody>'+
+ r.data.map((x,i)=>{
+  const url=sb.storage.from(BUCKET).getPublicUrl(x.file_path).data.publicUrl;
+  return '<tr><td>'+(i+1)+'</td><td>'+esc(x.student_name)+'</td><td>'+esc(x.roll_number)+'</td><td>'+esc(x.subject)+'</td><td>'+esc(x.filename)+'</td><td>'+esc(new Date(x.submitted_at).toLocaleString())+'</td><td><a class="btn" target="_blank" rel="noopener" href="'+url+'">Open PDF</a><a class="btn" download href="'+url+'">Download</a></td></tr>'
+ }).join("")+'</tbody></table></div>';
+}
+
+$("form").addEventListener("submit",async e=>{
+ e.preventDefault();hideMsg($("msg"));
+ const f=file.files[0];
+ if(!validFile(f)){showMsg($("msg"),"Please choose a PDF under 20 MB.","err");return}
+ const name=$("name").value.trim(),roll=$("roll").value.trim(),subject=$("subject").value.trim();
+ if(!name||!roll||!subject){showMsg($("msg"),"Please fill in all details.","err");return}
+ const btn=$("send");btn.disabled=true;btn.textContent="Connecting...";
+ try{
+  await loadSupabase();
+  btn.textContent="Uploading PDF...";
+  const cleanRoll=roll.replace(/[^a-zA-Z0-9_-]/g,"_");
+  const path=Date.now()+"-"+(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2))+"-"+cleanRoll+".pdf";
+  const u=await sb.storage.from(BUCKET).upload(path,f,{contentType:"application/pdf",upsert:false});
+  if(u.error)throw u.error;
+  const d=await sb.from("assignments").insert({student_name:name,roll_number:roll,subject:subject,filename:f.name,file_path:path});
+  if(d.error){await sb.storage.from(BUCKET).remove([path]);throw d.error}
+  showMsg($("msg"),"Assignment submitted successfully! PDF saved online.","ok");
+  $("form").reset();fn.textContent="";
+ }catch(err){console.error(err);showMsg($("msg"),"Upload failed: "+(err.message||"Please try again."),"err")}
+ finally{btn.disabled=false;btn.textContent="Submit Assignment"}
+});
+
+document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>closeModal(b.dataset.close)));
+document.querySelectorAll(".ov").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)o.classList.remove("open")}));
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal("loginOv");closeModal("dashOv")}});
+
+</script>
+</body>
+</html>
